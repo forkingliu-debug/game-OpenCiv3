@@ -146,8 +146,8 @@
 - 验收标准：
   - 新游戏主流程不要求配置 Civ3 安装目录
   - Civ3 导入仅作为辅助工具存在
-- 状态：进行中
-- 备注：已新增 `doc/runtime-path-baseline.md`，当前已确认 standalone 主路径与残余 Civ3 依赖点
+- 状态：已完成
+- 备注：已完成 standalone-first 主流程收口；主菜单在缺少经典资源时自动进入 standalone，新游戏主流程不再默认依赖 `DefaultBicPath`
 
 ## 5. M1 框架去原版依赖
 

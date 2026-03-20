@@ -114,7 +114,7 @@ public partial class Game : Node {
 		// use the same filenames but have different content for them.
 		Util.ClearCaches();
 
-		CreateGameParams options = new(GamePaths.LuaRulesDir, GamePaths.DefaultBicPath)
+		CreateGameParams options = new(GamePaths.LuaRulesDir)
 			{
 			GetPediaIconsPath = (scenarioSearchPath) => {
 				// When the game loading logic tries to load the PediaIcons file, set the
@@ -139,6 +139,7 @@ public partial class Game : Node {
 		if (Global.SaveGame != null) {
 			controller = await CreateGame.createGame(Global.SaveGame, options);
 		} else if (Global.LoadGamePath != null) {
+			options.DefaultBicPath = GamePaths.DefaultBicPath;
 			controller = await CreateGame.createGame(Global.LoadGamePath, options);
 		} else {
 			throw new InvalidOperationException("Save data was not set");

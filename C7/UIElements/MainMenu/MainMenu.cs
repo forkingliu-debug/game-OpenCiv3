@@ -38,15 +38,14 @@ public partial class MainMenu : Node {
 		// To pass data between scenes, putting path string in a global singleton and reading it later in createGame
 		Global = GetNode<GlobalSingleton>("/root/GlobalSingleton");
 		Global.ResetLoadGameFields();
+		bool classicGraphicsAvailable = ClassicGraphicsAvailable();
 
 		LoadDialog.SetDirectoryForLoading(@"Conquests/Saves");
 		LoadScenarioDialog.SetDirectoryForLoading(@"Conquests/Scenarios");
 		LoadScenarioDialog.GoToScenarioSetupAfterLoading = true;
 
-		if (!C7Settings.UseStandaloneMode() && !ClassicGraphicsAvailable()) {
-			NoCiv3Options.Visible = true;
-			ButtonContainer.Visible = false;
-			return;
+		if (!classicGraphicsAvailable) {
+			EnableStandaloneMode();
 		}
 
 		ButtonContainer.Visible = true;
@@ -79,8 +78,19 @@ public partial class MainMenu : Node {
 			ButtonContainer.ToggleGraphics.Visible = false;
 		}
 
-		// Hide if valid path is present as proven by reaching this point in code
-		NoCiv3Options.Visible = false;
+		NoCiv3Options.Visible = !classicGraphicsAvailable;
+	}
+
+	private void EnableStandaloneMode() {
+		if (!Global.ModernGraphicsActive) {
+			Global.ToggleModernGraphics();
+		}
+
+		if (!C7Settings.UseStandaloneMode()) {
+			C7Settings.SetValue("locations", "useStandaloneMode", "true");
+			C7Settings.SaveSettings();
+			log.Information("Classic Civ3 assets were not found; enabling standalone mode");
+		}
 	}
 
 	private bool ClassicGraphicsAvailable() {
@@ -170,11 +180,7 @@ public partial class MainMenu : Node {
 	}
 
 	private void UseStandaloneModePressed() {
-		if (!Global.ModernGraphicsActive) {
-			Global.ToggleModernGraphics();
-		}
-		C7Settings.SetValue("locations", "useStandaloneMode", "true");
-		C7Settings.SaveSettings();
+		EnableStandaloneMode();
 		DisplayTitleScreen();
 	}
 }

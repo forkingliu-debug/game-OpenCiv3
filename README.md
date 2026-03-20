@@ -26,6 +26,8 @@ Find the project interesting and want to contribute?  See [Contributing](https:/
 
 To set up a working development environment, see [Developing and Setting Up IDEs](https://github.com/C7-Game/Prototype/wiki/Developing-and-Setting-Up-IDEs).
 
+For this fork's local planning and engineering documents, start with [doc/README.md](doc/README.md). The current repository branching rules are documented in [doc/git-branching-strategy.md](doc/git-branching-strategy.md).
+
 ## What are those subfolders?
 
 - Blast - An Apache-2.0 library for decompressing PKWare DCL, the compression used for Civ3 BIQ and SAV files. Copied from [jamestefler/Blast/Blast](https://github.com/jamestelfer/Blast/tree/3f8c7919c0444c75121f7371c812ec5c2bb9905b/Blast), used by QueryCiv3

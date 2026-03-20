@@ -19,14 +19,12 @@
 
 - 新游戏数据源可以直接从 `base-ruleset.json + standalone.lua` 构造
 - `QuickStart` 和 `New Game` 已能通过 `GameModeLoader` 生成 `SaveGame`
-- 主菜单在未找到 Civ3 路径时，允许用户切换到 standalone 模式继续进入游戏
+- 主菜单在未找到经典 Civ3 图形时，会自动切换到 standalone 模式继续进入游戏
 - standalone 模式下，媒体解析优先使用 OpenCiv3 自带资源
 
 尚未成立的事实：
 
-- 游戏整体运行层还没有完全摆脱对 `DefaultBicPath` 的默认假设
 - 主菜单音频和部分 UI/资源加载仍可能走 `Civ3MediaPath`
-- “standalone 是默认主流程”在产品行为层面还没有彻底固化
 
 结论：
 
@@ -41,13 +39,13 @@
 
 当前逻辑：
 
-- 若未启用 standalone 且找不到经典 Civ3 图形，则显示 `NoCiv3Options`
-- 用户可以选择设置 Civ3 目录
-- 用户也可以直接点击“Play in standalone mode”
+- 启动场景默认进入主菜单
+- 若找不到经典 Civ3 图形，则自动启用 standalone 模式
+- 同时保留 `NoCiv3Options`，允许用户后续补设 Civ3 目录
 
 对应 UI 位于 [main_menu.tscn](D:/Project-AI/game-OpenCiv3/C7/UIElements/MainMenu/main_menu.tscn#L84)。
 
-这说明项目已经承认“没有 Civ3 目录也应可进入游戏”，这是 `M0.3` 的正确方向。
+这说明项目已经把“没有 Civ3 目录也应可进入游戏”落到了默认产品行为上，这是 `M0.3` 的正确方向。
 
 ### 3.2 新游戏入口
 
@@ -71,12 +69,13 @@
 
 - `Game` 场景从 `GlobalSingleton` 读取 `SaveGame` 或存档路径
 - 再调用 `CreateGame.createGame(...)`
-- `CreateGameParams` 当前始终带入 `GamePaths.DefaultBicPath`
+- standalone 新游戏不再默认带入 `GamePaths.DefaultBicPath`
+- 只有加载旧 `.sav/.biq` 时才带入 `GamePaths.DefaultBicPath`
 
 这意味着：
 
 - 新游戏数据可以来自 standalone ruleset
-- 但运行时创建流程仍保留了“默认 BIQ 路径始终存在”的接口假设
+- 新游戏主流程不再保留“默认 BIQ 路径始终存在”的接口假设
 
 这正是 `M0.3` 和 `M1.1/M1.2` 之间的边界。
 
@@ -117,18 +116,18 @@
 
 ## 5. 仍然存在的 Civ3 依赖点
 
-### 5.1 默认 BIQ 路径假设
+### 5.1 兼容导入仍依赖默认 BIQ 路径
 
 [GamePaths.cs](D:/Project-AI/game-OpenCiv3/C7/GamePaths.cs#L45) 仍定义：
 
 - `DefaultBicPath = Util.GetCiv3Path() + "/Conquests/conquests.biq"`
 
-[Game.cs](D:/Project-AI/game-OpenCiv3/C7/Game.cs#L117) 和 [ScenarioSetup.cs](D:/Project-AI/game-OpenCiv3/C7/UIElements/NewGame/ScenarioSetup.cs#L107) 仍把它传入创建或加载流程。
+[ScenarioSetup.cs](D:/Project-AI/game-OpenCiv3/C7/UIElements/NewGame/ScenarioSetup.cs#L107) 和旧存档导入流程仍把它作为兼容参数传入。
 
 风险：
 
-- 即使 standalone 新游戏可生成 `SaveGame`，底层接口仍默认携带 Civ3 规则文件路径
-- 这会阻碍后续把主流程彻底定义为“自有 ruleset first”
+- `.sav/.biq` 导入仍需要原版规则基线
+- 这类依赖应继续被限定在兼容链，而不是重新渗回主流程
 
 ### 5.2 主菜单音频仍走 Civ3 资源解析
 
@@ -193,7 +192,7 @@
 
 - `New Game` 和 `Quick Start` 被正式认定为 standalone-first
 - “未设置 Civ3 目录”不再阻断主流程进入
-- `DefaultBicPath` 不再是所有创建流程的隐含必需参数
+- `DefaultBicPath` 不再是所有创建流程的隐含必需参数，而仅属于兼容导入路径
 - 主菜单和基础 UI 不依赖 Civ3 音频/基础媒体才能正常工作
 - 场景加载、原版导入、原版兼容被归类到辅助路径
 

@@ -27,12 +27,19 @@ namespace C7Engine {
 		// Load and initialize a save
 		public static SaveGame LoadSave(string path, string bicPath, Func<string, string> getPediaIconsPath) {
 			SaveGame save = getFileFormat(path) switch {
-				SaveFileFormat.Sav => ImportCiv3.ImportSav(path, bicPath, getPediaIconsPath),
-				SaveFileFormat.Biq => ImportCiv3.ImportBiq(path, bicPath, getPediaIconsPath),
+				SaveFileFormat.Sav => ImportCiv3.ImportSav(path, RequireBiqPath(bicPath), getPediaIconsPath),
+				SaveFileFormat.Biq => ImportCiv3.ImportBiq(path, RequireBiqPath(bicPath), getPediaIconsPath),
 				SaveFileFormat.C7 => SaveGame.Load(path, getPediaIconsPath),
 				_ => throw new FileLoadException("invalid save format"),
 			};
 			return save;
+		}
+
+		private static string RequireBiqPath(string bicPath) {
+			if (string.IsNullOrEmpty(bicPath)) {
+				throw new InvalidOperationException("A Civilization III BIQ path is required when importing legacy .sav or .biq files");
+			}
+			return bicPath;
 		}
 
 		public static void Save(string path) {

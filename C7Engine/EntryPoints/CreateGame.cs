@@ -12,6 +12,11 @@ public class CreateGameParams {
 
 	public Func<string, string> GetPediaIconsPath = s => s;
 
+	public CreateGameParams(string LuaRulesDir) {
+		this.LuaRulesDir = LuaRulesDir;
+		this.DefaultBicPath = null;
+	}
+
 	public CreateGameParams(string LuaRulesDir, string DefaultBicPath) {
 		this.LuaRulesDir = LuaRulesDir;
 		this.DefaultBicPath = DefaultBicPath;
