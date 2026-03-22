@@ -38,14 +38,18 @@ public partial class MainMenu : Node {
 		// To pass data between scenes, putting path string in a global singleton and reading it later in createGame
 		Global = GetNode<GlobalSingleton>("/root/GlobalSingleton");
 		Global.ResetLoadGameFields();
-		bool classicGraphicsAvailable = ClassicGraphicsAvailable();
-
-		LoadDialog.SetDirectoryForLoading(@"Conquests/Saves");
-		LoadScenarioDialog.SetDirectoryForLoading(@"Conquests/Scenarios");
-		LoadScenarioDialog.GoToScenarioSetupAfterLoading = true;
+		bool classicGraphicsAvailable = Util.HasClassicCiv3Assets();
 
 		if (!classicGraphicsAvailable) {
 			EnableStandaloneMode();
+		}
+
+		LoadDialog.ConfigureForProjectSaveLoading();
+		LoadDialog.SetDirectoryForLoadingAt(GamePaths.SaveGamesDir);
+		LoadScenarioDialog.ConfigureForLegacyScenarioLoading();
+		LoadScenarioDialog.GoToScenarioSetupAfterLoading = true;
+		if (classicGraphicsAvailable) {
+			LoadScenarioDialog.SetDirectoryForLoading(@"Conquests/Scenarios");
 		}
 
 		ButtonContainer.Visible = true;
@@ -58,6 +62,7 @@ public partial class MainMenu : Node {
 		ButtonContainer.Tutorial.Visible = false;
 		ButtonContainer.LoadGame.Pressed += LoadGame;
 		ButtonContainer.LoadScenario.Pressed += LoadScenario;
+		ButtonContainer.LoadScenario.Disabled = !classicGraphicsAvailable;
 		ButtonContainer.HallOfFame.Pressed += HallOfFame;
 		ButtonContainer.HallOfFame.Visible = false;
 		ButtonContainer.Preferences.Pressed += Preferences;
@@ -93,22 +98,6 @@ public partial class MainMenu : Node {
 		}
 	}
 
-	private bool ClassicGraphicsAvailable() {
-		if (string.IsNullOrEmpty(Util.Civ3Root)) {
-			return false;
-		}
-
-		string[] basePaths = ["Conquests", "civ3PTW", ""];
-		foreach (string basePath in basePaths) {
-			string relPath = string.IsNullOrEmpty(basePath) ? "Art/buttonsFINAL.pcx" : $"{basePath}/Art/buttonsFINAL.pcx";
-			if (Util.FileExistsIgnoringCase(Util.Civ3Root, relPath) != null) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
 	private void SetToggleGraphicsText() {
 		if (Global.ModernGraphicsActive) {
 			ButtonContainer.ToggleGraphics.Text = "Import Civilization III Graphics";
@@ -137,6 +126,9 @@ public partial class MainMenu : Node {
 
 	public void LoadScenario() {
 		log.Information("load scenario button pressed");
+		if (!Util.HasClassicCiv3Assets()) {
+			return;
+		}
 		PlayButtonPressedSound();
 		LoadScenarioDialog.Popup();
 	}

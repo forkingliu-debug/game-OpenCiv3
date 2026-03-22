@@ -101,9 +101,7 @@ namespace C7GameData.Save {
 		public GameData ToGameData(string luaRulesDir) {
 			GameData data = InitializeGameData();
 
-			// TODO: In the future the path to the Lua script should be loaded from a save
-			// to allow a modded game to rely on a specific Lua ruleset.
-			string rulesScript = "civ3.lua";
+			string rulesScript = string.IsNullOrWhiteSpace(RulesScript) ? "civ3.lua" : RulesScript;
 			data.luaRulesEngine.Initialize(luaRulesDir, rulesScript);
 
 			ConvertTerrainImprovements(data);
@@ -384,6 +382,11 @@ namespace C7GameData.Save {
 		}
 
 		public string Version = "0.0.0";
+		public string DataSourceId;
+		public string DataSourceDisplayName;
+		public string DataSourceBasePath;
+		public List<string> DataSourceAddons = [];
+		public string RulesScript = "civ3.lua";
 		public int Seed = -1;
 		public int TurnNumber = 0;
 		public SaveMap Map = new SaveMap();

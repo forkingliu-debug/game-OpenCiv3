@@ -2,6 +2,7 @@ using C7Engine;
 using C7GameData;
 using Godot;
 using Serilog;
+using System.IO;
 
 [GlobalClass]
 public partial class Civ3FileDialog : FileDialog {
@@ -28,8 +29,32 @@ public partial class Civ3FileDialog : FileDialog {
 		FileMode = FileDialog.FileModeEnum.OpenFile;
 	}
 
+	public void ConfigureForProjectSaveLoading() {
+		Title = "Load OpenCiv3 Save";
+		ClearFilters();
+		AddFilter("*.json,*.zip ; OpenCiv3 saves");
+	}
+
+	public void ConfigureForLegacyScenarioLoading() {
+		Title = "Import Civilization III Scenario";
+		ClearFilters();
+		AddFilter("*.biq ; Civilization III scenarios");
+	}
+
+	public void SetDirectoryForLoadingAt(string absolutePath) {
+		Directory.CreateDirectory(absolutePath);
+		CurrentDir = absolutePath;
+		FileMode = FileDialog.FileModeEnum.OpenFile;
+	}
+
 	public void SetDirectoryForSaving(string RelPath) {
 		CurrentDir = Util.Civ3Root + "/" + RelPath;
+		FileMode = FileDialog.FileModeEnum.SaveFile;
+	}
+
+	public void SetDirectoryForSavingAt(string absolutePath) {
+		Directory.CreateDirectory(absolutePath);
+		CurrentDir = absolutePath;
 		FileMode = FileDialog.FileModeEnum.SaveFile;
 	}
 

@@ -52,8 +52,8 @@ public class SaveGameFixture : IDisposable {
 	const int TestSeed = 123456;
 
 	public SaveGameFixture() {
-		GameModeConfig basic = new("base-ruleset.json");
-		GameModeConfig standalone = new("base-ruleset.json", ["standalone.lua"]);
+		GameModeConfig basic = new("classic-base", "Classic Base Ruleset", "base-ruleset.json");
+		GameModeConfig standalone = new("openciv3-standalone", "OpenCiv3 Standalone Ruleset", "base-ruleset.json", addonPaths: ["standalone.lua"]);
 
 		saveGame = LoadSave(basic);
 		standaloneSaveGame = LoadSave(standalone);
@@ -161,6 +161,17 @@ public class SaveTests : IClassFixture<SaveGameFixture> {
 
 		// saved files should be the same as the original
 		Assert.True(JToken.DeepEquals(wasGameDataJson, neverGameDataJson));
+	}
+
+	[Theory]
+	[InlineData(SaveType.basic, "classic-base", "Classic Base Ruleset", "civ3.lua")]
+	[InlineData(SaveType.standalone, "openciv3-standalone", "OpenCiv3 Standalone Ruleset", "civ3.lua")]
+	public void SaveTracksDataSourceMetadata(SaveType saveType, string expectedId, string expectedDisplayName, string expectedRulesScript) {
+		SaveGame save = GetSave(saveType);
+
+		Assert.Equal(expectedId, save.DataSourceId);
+		Assert.Equal(expectedDisplayName, save.DataSourceDisplayName);
+		Assert.Equal(expectedRulesScript, save.RulesScript);
 	}
 
 	private void WaitForStartTurnMessage() {

@@ -14,7 +14,7 @@ public partial class QuickStartSetup : Node {
 
 		globalState.ResetLoadGameFields();
 
-		var save = GameModeLoader.Load(GamePaths.GameModesDir, GamePaths.GameMode);
+		var save = GameModeLoader.Load(GamePaths.GameModesDir, GamePaths.DefaultNewGameMode);
 
 		globalState.WorldCharacteristics = new WorldCharacteristics(save) {
 			landform = WorldCharacteristics.Landform.Pangaea,

@@ -19,6 +19,22 @@ public partial class Util {
 		return Civ3Location.GetCiv3Path();
 	}
 
+	public static bool HasClassicCiv3Assets() {
+		if (string.IsNullOrEmpty(Civ3Root)) {
+			return false;
+		}
+
+		string[] basePaths = ["Conquests", "civ3PTW", ""];
+		foreach (string basePath in basePaths) {
+			string relPath = string.IsNullOrEmpty(basePath) ? "Art/buttonsFINAL.pcx" : $"{basePath}/Art/buttonsFINAL.pcx";
+			if (FileExistsIgnoringCase(Civ3Root, relPath) != null) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	// Checks if a file exists ignoring case on the latter parts of its path. If the file is found, returns its full path re-capitalized as
 	// necessary, otherwise returns null. This function is needed for the game to work on Linux & Mac with the .NET Core runtime. It's not needed
 	// on Windows, which has a case insensitive filesystem, or when using the Mono runtime, which emulates case insensitivity out of the
@@ -165,6 +181,16 @@ public partial class Util {
 		throw new ApplicationException("Media path not found: " + mediaPath);
 	}
 
+	public static bool TryGetMediaPath(string mediaPath, out string resolvedPath) {
+		try {
+			resolvedPath = Civ3MediaPath(mediaPath);
+			return true;
+		} catch (ApplicationException) {
+			resolvedPath = null;
+			return false;
+		}
+	}
+
 	private static string CheckForCiv3Media(string relPath, string rootPath) {
 		// Combine TryPaths[i] and relPath. Make sure not to leave an erroneous forward slash at the start if TryPaths[i] is empty
 		string fullPath = rootPath != "" ? rootPath + "/" + relPath : relPath;
@@ -286,9 +312,13 @@ public partial class Util {
 	// The result may be null if modern graphics are active, as we do not yet
 	// have sound replacements.
 	public static AudioStreamWav? LoadCiv3WAVFromDisk(string path) {
+		if (!TryGetMediaPath(path, out string resolvedPath)) {
+			return null;
+		}
+
 		try {
-			return LoadWAVFromDisk(Civ3MediaPath(path));
-		} catch (Exception e) {
+			return LoadWAVFromDisk(resolvedPath);
+		} catch (Exception) {
 			return null;
 		}
 	}

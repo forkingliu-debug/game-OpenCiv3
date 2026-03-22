@@ -42,10 +42,10 @@ public partial class MenuButtonContainer : VBoxContainer {
 		Tutorial = new Civ3MenuButton() { Text = "Tutorial" };
 		AddChild(Tutorial);
 
-		LoadGame = new Civ3MenuButton() { Text = "Load Game" };
+		LoadGame = new Civ3MenuButton() { Text = "Load Save" };
 		AddChild(LoadGame);
 
-		LoadScenario = new Civ3MenuButton() { Text = "Load Scenario" };
+		LoadScenario = new Civ3MenuButton() { Text = "Import Legacy Scenario" };
 		AddChild(LoadScenario);
 
 		HallOfFame = new Civ3MenuButton() { Text = "Hall of Fame" };

@@ -139,7 +139,9 @@ public partial class Game : Node {
 		if (Global.SaveGame != null) {
 			controller = await CreateGame.createGame(Global.SaveGame, options);
 		} else if (Global.LoadGamePath != null) {
-			options.DefaultBicPath = GamePaths.DefaultBicPath;
+			if (SaveManager.RequiresLegacyImport(Global.LoadGamePath)) {
+				options.DefaultBicPath = GamePaths.DefaultBicPath;
+			}
 			controller = await CreateGame.createGame(Global.LoadGamePath, options);
 		} else {
 			throw new InvalidOperationException("Save data was not set");

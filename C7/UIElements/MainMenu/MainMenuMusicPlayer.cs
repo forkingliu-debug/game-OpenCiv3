@@ -13,10 +13,13 @@ public partial class MainMenuMusicPlayer : AudioStreamPlayer {
 		log = LogManager.ForContext<MainMenuMusicPlayer>();
 		//Figured out how to load the mp3 from this post: https://godotengine.org/qa/30210/how-do-load-resource-works
 
-		try {
-			string mp3Path = Util.Civ3MediaPath("Sounds/Menu/Menu1.mp3");
-			FileAccess mp3File = FileAccess.Open(mp3Path, FileAccess.ModeFlags.Read);
+		if (!Util.TryGetMediaPath("Sounds/Menu/Menu1.mp3", out string mp3Path)) {
+			log.Information("Main menu music not available for the current asset set; continuing without background music");
+			return;
+		}
 
+		try {
+			FileAccess mp3File = FileAccess.Open(mp3Path, FileAccess.ModeFlags.Read);
 			AudioStreamMP3 mp3 = new AudioStreamMP3();
 			long fileSize = (long)mp3File.GetLength();  //might blow up if it's > 2 GB, oh well
 			mp3.Data = mp3File.GetBuffer(fileSize);
@@ -36,7 +39,7 @@ public partial class MainMenuMusicPlayer : AudioStreamPlayer {
 				AudioServer.SetBusVolumeDb(busIndex, targetVolumeOffset);
 				Play();
 			}
-		} catch (ApplicationException ex) {
+		} catch (Exception ex) {
 			log.Error(ex, "could not load mp3 for main menu music");
 		}
 	}

@@ -27,21 +27,31 @@ public static class GamePaths {
 		}
 	}
 
-	// This is the 'static map' used in lieu of terrain generation
-	public static GameModeConfig GameMode {
-		get => C7Engine.C7Settings.UseStandaloneMode() ? standalone : basic;
-	}
+	// New games now always start from the OpenCiv3-owned ruleset. Classic Civ3
+	// assets may still be imported for compatibility, but they no longer define
+	// the default game data source.
+	public static GameModeConfig DefaultNewGameMode => standalone;
 
-	public static GameModeConfig basic = new("base-ruleset.json");
-	public static GameModeConfig standalone = new("base-ruleset.json", ["standalone.lua"]);
+	public static GameModeConfig basic = new(
+		id: "classic-base",
+		displayName: "Classic Base Ruleset",
+		baseModePath: "base-ruleset.json"
+	);
+	public static GameModeConfig standalone = new(
+		id: "openciv3-standalone",
+		displayName: "OpenCiv3 Standalone Ruleset",
+		baseModePath: "base-ruleset.json",
+		addonPaths: ["standalone.lua"]
+	);
 
 	public static string LuaRulesDir => Path.Combine(BaseDir, "Lua/rules/");
 	public static string TextureConfigsDir => Path.Combine(BaseDir, "Lua/texture_configs/");
 	public static string GameModesDir => Path.Combine(BaseDir, "Lua/game_modes/");
+	public static string SaveGamesDir => ProjectSettings.GlobalizePath("user://Saves");
 
 	public const string ModernGraphicsConfig = "c7.lua";
 	public const string ClassicGraphicsConfig = "civ3.lua";
 
-	// For now this needs to get passed to QueryCiv3 when importing.
-	public static string DefaultBicPath { get => Util.GetCiv3Path() + "/Conquests/conquests.biq"; }
+	// Legacy Civ3 import still uses the stock BIQ as a compatibility baseline.
+	public static string DefaultBicPath => Path.Combine(Util.GetCiv3Path(), "Conquests", "conquests.biq");
 }

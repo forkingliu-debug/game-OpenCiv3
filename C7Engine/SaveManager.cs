@@ -14,6 +14,14 @@ namespace C7Engine {
 	// The engine performs all save file creating, reading, and updating
 	// via the SaveManager
 	public static class SaveManager {
+		public static bool RequiresLegacyImport(string path) {
+			return getFileFormat(path) switch {
+				SaveFileFormat.Sav => true,
+				SaveFileFormat.Biq => true,
+				_ => false,
+			};
+		}
+
 		private static SaveFileFormat getFileFormat(string path) {
 			return Path.GetExtension(path).ToUpper() switch {
 				".SAV" => SaveFileFormat.Sav,

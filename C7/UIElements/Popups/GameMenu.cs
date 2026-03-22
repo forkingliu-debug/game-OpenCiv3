@@ -29,8 +29,7 @@ public partial class GameMenu : Popup {
 
 	private void save() {
 		var loadDialog = GetNode<Civ3FileDialog>("../%LoadDialog");
-		// TODO: this should go to our own saves directory.
-		loadDialog.SetDirectoryForSaving(@"Conquests/Saves");
+		loadDialog.SetDirectoryForSavingAt(GamePaths.SaveGamesDir);
 
 		// TODO: The main menu does sound playing but we don't know our path in
 		// the scene, which makes this hard.
@@ -50,7 +49,7 @@ public partial class GameMenu : Popup {
 
 	private void load() {
 		var loadDialog = GetNode<Civ3FileDialog>("../%LoadDialog");
-		loadDialog.SetDirectoryForLoading(@"Conquests/Saves");
+		loadDialog.SetDirectoryForLoadingAt(GamePaths.SaveGamesDir);
 
 		// TODO: The main menu does sound playing but we don't know our path in
 		// the scene, which makes this hard.

@@ -272,7 +272,7 @@ public partial class WorldSetup : Control {
 		billion4Large.Visible = true;
 		billion4.ButtonPressed = true;
 
-		_saveGame = GameModeLoader.Load(GamePaths.GameModesDir, GamePaths.GameMode);
+		_saveGame = GameModeLoader.Load(GamePaths.GameModesDir, GamePaths.DefaultNewGameMode);
 
 		InitBarbarianActivityOptions();
 		InitMapSizes();

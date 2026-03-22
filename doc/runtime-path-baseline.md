@@ -13,22 +13,21 @@
 
 ## 2. 当前结论
 
-当前仓库已经具备 standalone 主路径雏形，但尚未完全成为默认且完整的主运行路径。
+当前仓库已经完成 standalone-first 主路径收口，可作为默认且完整的新游戏主运行路径。
 
 已成立的事实：
 
 - 新游戏数据源可以直接从 `base-ruleset.json + standalone.lua` 构造
+- 新游戏和快速开始现在默认使用 OpenCiv3 自有 standalone ruleset，而不是跟随 Civ3 兼容开关切换
 - `QuickStart` 和 `New Game` 已能通过 `GameModeLoader` 生成 `SaveGame`
 - 主菜单在未找到经典 Civ3 图形时，会自动切换到 standalone 模式继续进入游戏
 - standalone 模式下，媒体解析优先使用 OpenCiv3 自带资源
-
-尚未成立的事实：
-
-- 主菜单音频和部分 UI/资源加载仍可能走 `Civ3MediaPath`
+- 主菜单音频在缺少经典资源时会静默降级，不再阻断主流程
+- 存档读写默认落到项目自己的用户目录，而不是 Civ3 安装目录
 
 结论：
 
-- `M0.3` 当前应判定为“进行中”
+- `M0.3` 当前应判定为“已完成”
 - `M1` 可以在本基线文档基础上继续拆分启动流程、数据源和兼容模块职责
 
 ## 3. 当前启动链路
@@ -129,14 +128,16 @@
 - `.sav/.biq` 导入仍需要原版规则基线
 - 这类依赖应继续被限定在兼容链，而不是重新渗回主流程
 
-### 5.2 主菜单音频仍走 Civ3 资源解析
+### 5.2 主菜单音频与存档路径已完成主流程解耦
 
-[MainMenu.cs](D:/Project-AI/game-OpenCiv3/C7/UIElements/MainMenu/MainMenu.cs#L151) 的按钮音效仍通过 `LoadCiv3WAVFromDisk("Sounds/Button1.wav")` 加载。
+[MainMenu.cs](D:/Project-AI/game-OpenCiv3/C7/UIElements/MainMenu/MainMenu.cs#L151) 的按钮音效已改为可选资源。
+[MainMenuMusicPlayer.cs](D:/Project-AI/game-OpenCiv3/C7/UIElements/MainMenu/MainMenuMusicPlayer.cs#L13) 在缺少音频资源时会直接跳过背景音乐，不再把 Civ3 音频视作主流程依赖。
+[Civ3FileDialog.cs](D:/Project-AI/game-OpenCiv3/C7/UIElements/Civ3FileDialog.cs#L29) 与 [GamePaths.cs](D:/Project-AI/game-OpenCiv3/C7/GamePaths.cs#L41) 已让普通存档默认使用项目自身的用户存档目录。
 
 影响：
 
-- standalone 模式下如果 C7 资源中没有对应音频，主菜单行为会部分退化
-- 虽然当前空值被容错处理，但仍属于“主菜单依赖旧资源约定”
+- standalone 模式下缺少音频资源只会导致静默降级，不会破坏启动和主菜单交互
+- 存档读写不再要求存在 Civ3 安装目录
 
 ### 5.3 部分 UI/媒体系统仍复用 Civ3 媒体入口
 
@@ -176,6 +177,13 @@
 - standalone / ruleset 是主产品路径
 - Civ3 import 是辅助工具路径
 - 两者可以共存，但不能再由兼容路径定义主流程
+
+补充说明：
+
+- 普通 OpenCiv3 存档（如 `.json`/`.zip`）的加载流程不再附带 `DefaultBicPath`
+- `DefaultBicPath` 继续只服务于 legacy `.sav/.biq` 导入链
+- ruleset 主数据源边界见 `doc/ruleset-data-boundary.md`
+- 兼容模块职责边界见 `doc/compatibility-module-boundary.md`
 
 ## 7. 过渡期兼容策略
 

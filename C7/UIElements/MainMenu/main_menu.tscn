@@ -94,8 +94,8 @@ custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 12
-text = "An installation of Civilization III was not found.
-You may provide the location of game files, OR play in standalone mode to use OpenCiv3 files only"
+text = "Civilization III files were not found.
+OpenCiv3 can start immediately with its built-in rules and assets, or you can point the game at a Civilization III install for legacy imports."
 autowrap_mode = 2
 
 [node name="SetCiv3Home" type="Button" parent="Control/NoCiv3Options"]
@@ -116,7 +116,7 @@ theme_override_font_sizes/font_size = 24
 theme_override_styles/hover = SubResource("StyleBoxFlat_vbij8")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_e20w6")
 theme_override_styles/normal = SubResource("StyleBoxFlat_gmerc")
-text = "Play in standalone mode"
+text = "Play OpenCiv3"
 
 [node name="Label" type="Label" parent="Control/NoCiv3Options/UseStandaloneMode"]
 layout_mode = 0
@@ -124,7 +124,7 @@ offset_top = 42.0
 offset_right = 314.0
 offset_bottom = 62.0
 theme_override_font_sizes/font_size = 11
-text = "Notice: standalone mode makes use of AI placeholder art"
+text = "Uses the built-in OpenCiv3 ruleset and bundled placeholder art"
 horizontal_alignment = 1
 
 [node name="MainMenuMusicPlayer" type="AudioStreamPlayer" parent="."]

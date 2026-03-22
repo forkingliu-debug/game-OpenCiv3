@@ -193,7 +193,7 @@ public partial class PlayerSetup : Control {
 	}
 
 	private SaveGame GetSave() {
-		return GameModeLoader.Load(GamePaths.GameModesDir, GamePaths.GameMode);
+		return GameModeLoader.Load(GamePaths.GameModesDir, GamePaths.DefaultNewGameMode);
 	}
 
 	private List<SelectedOpponent> CollectSelectedOpponents() {

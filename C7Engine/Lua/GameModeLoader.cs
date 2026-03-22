@@ -8,6 +8,9 @@ using MoonSharp.Interpreter;
 namespace C7Engine.Lua;
 
 public class GameModeConfig {
+	public string id;
+	public string displayName;
+
 	// The base scenario definition file. Should be a JSON or a Lua
 	// script returning a table
 	public string baseModePath;
@@ -16,8 +19,15 @@ public class GameModeConfig {
 	// function that modifies the scenario data and returns it.
 	public List<string> addonPaths = [];
 
-	public GameModeConfig(string baseModePath, List<string> addonPaths = null) {
+	// The Lua rules script used to interpret the data once a SaveGame becomes
+	// runtime GameData.
+	public string rulesScript;
+
+	public GameModeConfig(string id, string displayName, string baseModePath, string rulesScript = "civ3.lua", List<string> addonPaths = null) {
+		this.id = id;
+		this.displayName = displayName;
 		this.baseModePath = baseModePath;
+		this.rulesScript = rulesScript;
 		this.addonPaths = addonPaths ?? [];
 	}
 }
@@ -60,6 +70,13 @@ public class GameModeLoader {
 		// Convert final Lua table to JSON for deserialization
 		string json = converter.Encode(current);
 
-		return SaveGame.LoadFromJSON(json);
+		SaveGame save = SaveGame.LoadFromJSON(json);
+		save.DataSourceId = config.id;
+		save.DataSourceDisplayName = config.displayName;
+		save.DataSourceBasePath = config.baseModePath;
+		save.DataSourceAddons = [.. config.addonPaths];
+		save.RulesScript = config.rulesScript;
+
+		return save;
 	}
 }
